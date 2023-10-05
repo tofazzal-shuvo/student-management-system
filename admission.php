@@ -25,7 +25,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
             <div class="col py-0">
                 <div class="d-flex flex-column justify-content-between auth_page">
                     <div>
-                        lsdkf
+                        admin dashboard
                     </div>
                     <!-- footer -->
                     <?php include "./components/footer.php" ?>
