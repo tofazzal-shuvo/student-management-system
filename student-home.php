@@ -1,8 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'student') {
-    header('location:login.php');
-}
+include "./utils/studentAuth.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">

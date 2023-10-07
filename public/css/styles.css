@@ -17,6 +17,10 @@ h3 {
   /* font-family: 'Roboto', sans-serif;
     font-family: 'Roboto Mono', monospace; */
 }
+.section_titles {
+  font-size: 22px;
+  padding: 25px;
+}
 
 /* navbar */
 .navbar {
@@ -122,4 +126,26 @@ footer i {
 /* auth pages */
 .auth_page {
   min-height: 100vh;
+}
+
+/* admission list */
+.admission_list {
+  width: 100%;
+  border: 1px solid #bdbdbd;
+}
+.admission_list tr,
+.admission_list td,
+.admission_list th {
+  border: 1px solid #bdbdbd;
+  border-collapse: collapse;
+  text-align: center;
+  padding: 10px;
+  vertical-align: top;
+}
+.admission_list td:first-child {
+  width: 80px;
+}
+.admission_list td:last-child {
+  text-align: left;
+  width: 35%;
 }

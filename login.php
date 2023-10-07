@@ -1,3 +1,45 @@
+<?php
+// error_reporting(0);
+session_start();
+
+if (isset($_POST["login_submit"])) {
+    include "boot/dbConnector.php";
+    $email = $_POST["email"];
+    $passord = $_POST["password"];
+
+    $query = "SELECT * FROM user WHERE email='" . $email . "'";
+    $compiled_query = mysqli_query($db, $query);
+    $result = mysqli_fetch_array($compiled_query);
+    if ($result["status"] === 'requested') {
+        $_SESSION["login_msg"] = "You hasn't admitted by admin. Please wait until admin not accept.";
+        $_SESSION["success"] = false;
+        header("location:login.php");
+    }
+
+    $query = "SELECT * FROM user WHERE email='" . $email . "' AND password='" . $passord . "'";
+    $compiled_query = mysqli_query($db, $query);
+    $result = mysqli_fetch_array($compiled_query);
+    echo mysqli_error($db);
+    if ($result["role"] === 'student') {
+        $_SESSION["role"] = "student";
+        $_SESSION["email"] = $email;
+        header("location:student-home.php");
+    } else if ($result["role"] === 'admin') {
+        $_SESSION["role"] = 'admin';
+        $_SESSION["email"] = $email;
+        header("location:admin-home.php");
+    } else {
+        $_SESSION["login_msg"] = "Email or password incorrect.";
+        $_SESSION["success"] = false;
+        header("location:login.php");
+    }
+} else {
+    session_destroy();
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,22 +64,19 @@
                     <div class="col-md-6 offset-3">
                         <h4 class="text-center" style="font-size: 14px;color: red;">
                             <?php
-                            error_reporting(0);
-                            session_start();
-                            echo $_SESSION['message'];
-                            session_destroy();
+                            echo $_SESSION['login_msg'];
                             ?>
                         </h4>
-                        <form action="login_check.php" method="POST">
+                        <form action="#" method="POST">
                             <div class="form-group mb-4">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" placeholder="e.g. Jhon">
+                                <label for="email">Email</label>
+                                <input type="text" class="form-control" name="email" placeholder="e.g. jhon@example.com" required>
                             </div>
                             <div class="form-group mb-4">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="*******">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="*******" required>
                             </div>
-                            <input type="submit" value="Login" class="btn btn-success">
+                            <input type="submit" value="Login" name="login_submit" class="btn btn-success">
                         </form>
                     </div>
                 </div>

@@ -1,12 +1,36 @@
 <?php
-error_reporting(0);
+// error_reporting(0);
 session_start();
-if ($_SESSION['message']) {
-    $message = $_SESSION['message'];
-    echo "<script type='text/javascript'>
-        alert('$message');
-    </script>";
+
+if (isset($_POST["admission_form_values"])) {
+    include "./boot/dbConnector.php";
+
+    $fullname = $_POST["fullname"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $message = $_POST["message"];
+
+    // Check if the email already exist.
+    $query = "SELECT * FROM user WHERE email='" . $email . "' OR phone = '" . $phone . "'";
+    $compiled_query = mysqli_query($db, $query);
+    if ($compiled_query && mysqli_num_rows($compiled_query) > 0) {
+        $_SESSION["admission_response"] = "Email or phone exist.";
+        $_SESSION["success"] = false;
+        header("location:index.php");
+    } else {
+        $query = "INSERT INTO user(fullname, email, phone, message) VALUES('$fullname', '$email', '$phone', '$message')";
+        $result = mysqli_query($db, $query);
+        if ($result) {
+            $_SESSION["admission_response"] = "Submitted successfully. Please wait until admin accept your request.";
+            $_SESSION["success"] = true;
+        } else {
+            $_SESSION["admission_response"] = "Something went wrong.";
+            $_SESSION["success"] = false;
+            header("location:index.php");
+        }
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -188,31 +212,50 @@ if ($_SESSION['message']) {
                 <h2 class="text-center mb-4">Admission Form</h2>
 
                 <div class="col-md-6 offset-3">
-                    <form action="admissing-form-controller.php" method="POST">
+                    <form action="#" method="POST" id="admission_form">
                         <div class="form-group mb-4">
-                            <label for="username">Full name</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="e.g. Jhon Dow">
+                            <label for="fullname">Full name*</label>
+                            <input type="text" class="form-control" name="fullname" placeholder="e.g. Jhon Dow" required>
                         </div>
                         <div class="form-group mb-4">
-                            <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="e.g. jhon@example.com">
+                            <label for="email">Email address*</label>
+                            <input type="email" class="form-control" name="email" placeholder="e.g. jhon@example.com" required>
                         </div>
                         <div class="form-group mb-4">
-                            <label for="phone">Phone</label>
-                            <input type="number" class="form-control" id="phone" name="phone" placeholder="e.g. 017XXXXXXXX">
+                            <label for="phone">Phone*</label>
+                            <input type="number" class="form-control" name="phone" placeholder="e.g. 017XXXXXXXX" required>
                         </div>
                         <div class="form-group mb-4">
-                            <label for="description">Message</label>
-                            <textarea class="form-control" id="description" placeholder="Message, what's on your mind?" name="message"></textarea>
+                            <label for="message">Message</label>
+                            <textarea class="form-control" id="message" placeholder="Message, what's on your mind?" name="message"></textarea>
                         </div>
-                        <input type="submit" value="Apply" name="apply" class="btn btn-success">
+                        <input type="submit" value="Apply" name="admission_form_values" class="btn btn-success">
                     </form>
                 </div>
             </div>
         </div>
     </section>
     <?php include "./components/footer.php" ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>
+
+<?php
+$msg = $_SESSION['admission_response'];
+$success = $_SESSION['success'];
+if ($msg) {
+    if ($success) {
+        echo "<script>
+                \$(document).ready(function () {
+                    toastr.success('$msg');
+                });
+            </script>";
+    } else {
+        echo "<script>
+                \$(document).ready(function () {
+                    toastr.warning('$msg');
+                });
+            </script>";
+    }
+};
+?>

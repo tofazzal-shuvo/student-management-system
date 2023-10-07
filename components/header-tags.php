@@ -12,3 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap" rel="stylesheet">
 <!-- <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap" rel="stylesheet"> -->
 <!-- <link href="https://fonts.googleapis.com/css2?family=Mooli&family=Open+Sans:wght@300;500&family=Roboto+Mono:wght@300;500&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"> -->
+<!-- <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script> -->
+
+<link href="public/css/toastr.css" rel="stylesheet" />

@@ -1,8 +1,18 @@
 <?php
-session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header('location:login.php');
+include "./utils/adminAuth.php";
+
+$host = 'localhost';
+$user = 'root';
+$passord = '';
+$dbName = 'student_management';
+$db = mysqli_connect($host, $user, $passord, $dbName);
+if ($db === false) {
+    die('Database connection error.');
 }
+
+$sql = 'SELECT * FROM admission';
+$sql_query = mysqli_query($db, $sql);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +35,31 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
             <div class="col py-0">
                 <div class="d-flex flex-column justify-content-between auth_page">
                     <div>
-                        admin dashboard
+                        <h2 class="section_titles">Applied Students</h2>
+                        <table class="admission_list">
+                            <tr>
+                                <th>No</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Message</th>
+                            </tr>
+                            <?php
+                            $rowNumber = 1;
+                            while ($row = $sql_query->fetch_assoc()) {
+                            ?>
+                                <tr>
+                                    <td><?php echo $rowNumber ?></td>
+                                    <td><?php echo "{$row['username']}" ?></td>
+                                    <td><?php echo "{$row['email']}" ?></td>
+                                    <td><?php echo "{$row['phone']}" ?></td>
+                                    <td><?php echo "{$row['message']}" ?></td>
+                                </tr>
+                            <?php
+                                $rowNumber++;
+                            }
+                            ?>
+                        </table>
                     </div>
                     <!-- footer -->
                     <?php include "./components/footer.php" ?>
