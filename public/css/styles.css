@@ -129,23 +129,23 @@ footer i {
 }
 
 /* admission list */
-.admission_list {
+.generic_table {
   width: 100%;
   border: 1px solid #bdbdbd;
 }
-.admission_list tr,
-.admission_list td,
-.admission_list th {
+.generic_table tr,
+.generic_table td,
+.generic_table th {
   border: 1px solid #bdbdbd;
   border-collapse: collapse;
   text-align: center;
   padding: 10px;
   vertical-align: top;
 }
-.admission_list td:first-child {
+.generic_table td:first-child {
   width: 80px;
 }
-.admission_list td:last-child {
+.admission_table td:last-child {
   text-align: left;
   width: 35%;
 }

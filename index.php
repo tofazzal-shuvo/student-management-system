@@ -1,5 +1,5 @@
 <?php
-// error_reporting(0);
+error_reporting(0);
 session_start();
 
 if (isset($_POST["admission_form_values"])) {
@@ -17,8 +17,9 @@ if (isset($_POST["admission_form_values"])) {
         $_SESSION["admission_response"] = "Email or phone exist.";
         $_SESSION["success"] = false;
         header("location:index.php");
+        exit();
     } else {
-        $query = "INSERT INTO user(fullname, email, phone, message) VALUES('$fullname', '$email', '$phone', '$message')";
+        $query = "INSERT INTO user(fullname, email, phone, role, message) VALUES('$fullname', '$email', '$phone', 'student', '$message')";
         $result = mysqli_query($db, $query);
         if ($result) {
             $_SESSION["admission_response"] = "Submitted successfully. Please wait until admin accept your request.";
@@ -26,9 +27,10 @@ if (isset($_POST["admission_form_values"])) {
         } else {
             $_SESSION["admission_response"] = "Something went wrong.";
             $_SESSION["success"] = false;
-            header("location:index.php");
         }
     }
+    header("location:index.php");
+    exit();
 }
 
 ?>
@@ -257,5 +259,6 @@ if ($msg) {
                 });
             </script>";
     }
+    $_SESSION['admission_response'] = "";
 };
 ?>

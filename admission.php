@@ -10,7 +10,7 @@ if ($db === false) {
     die('Database connection error.');
 }
 
-$sql = 'SELECT * FROM admission';
+$sql = "SELECT * FROM user WHERE role='student' AND status='requested'";
 $sql_query = mysqli_query($db, $sql);
 
 ?>
@@ -36,7 +36,7 @@ $sql_query = mysqli_query($db, $sql);
                 <div class="d-flex flex-column justify-content-between auth_page">
                     <div>
                         <h2 class="section_titles">Applied Students</h2>
-                        <table class="admission_list">
+                        <table class="generic_table admission_table">
                             <tr>
                                 <th>No</th>
                                 <th>Full Name</th>
@@ -50,7 +50,7 @@ $sql_query = mysqli_query($db, $sql);
                             ?>
                                 <tr>
                                     <td><?php echo $rowNumber ?></td>
-                                    <td><?php echo "{$row['username']}" ?></td>
+                                    <td><?php echo "{$row['fullname']}" ?></td>
                                     <td><?php echo "{$row['email']}" ?></td>
                                     <td><?php echo "{$row['phone']}" ?></td>
                                     <td><?php echo "{$row['message']}" ?></td>
@@ -67,7 +67,6 @@ $sql_query = mysqli_query($db, $sql);
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>

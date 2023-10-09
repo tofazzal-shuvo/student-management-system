@@ -3,15 +3,73 @@ include "./utils/adminAuth.php";
 
 $host = 'localhost';
 $user = 'root';
-$passord = '';
+$password = '';
 $dbName = 'student_management';
-$db = mysqli_connect($host, $user, $passord, $dbName);
+$db = mysqli_connect($host, $user, $password, $dbName);
 if ($db === false) {
     die('Database connection error.');
 }
+$list_sql = "SELECT * FROM user WHERE role='student' AND status='requested'";
+$student_list = mysqli_query($db, $list_sql);
 
-$sql = 'SELECT * FROM admission';
-$sql_query = mysqli_query($db, $sql);
+if (isset($_POST["add_requested_student"])) {
+    $userId = $_POST["userId"];
+    $password = $_POST["password"];
+    $conrim_password = $_POST["conrim_password"];
+    if ($password !== $conrim_password) {
+        $_SESSION["add_student_msg"] = "Password and confirm password not matched.";
+        $_SESSION["success"] = false;
+        header("location:add-student.php");
+        exit();
+    }
+    $update_sql = "UPDATE user SET status='approved', password='$password' WHERE id='" . $userId . "'";
+    $result = mysqli_query($db, $update_sql);
+    if ($result) {
+        $_SESSION["add_student_msg"] = "User has been added.";
+        $_SESSION["success"] = true;
+    } else {
+        $_SESSION["add_student_msg"] = "Something went wrong.";
+        $_SESSION["success"] = false;
+    }
+    header("location:add-student.php");
+    exit();
+}
+
+if (isset($_POST["add_student_menually"])) {
+    $role = "student";
+    $status = "approved";
+    $fullname = $_POST["fullname"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $password = $_POST["password"];
+    $conrim_password = $_POST["conrim_password"];
+    if ($password !== $conrim_password) {
+        $_SESSION["add_student_msg"] = "Password and confirm password not matched.";
+        $_SESSION["success"] = false;
+        header("location:add-student.php");
+        exit();
+    }
+    $query = "SELECT * FROM user WHERE email='" . $email . "' OR phone='" . $phone . "'";
+    $compiled_query = mysqli_query($db, $query);
+    $result = mysqli_fetch_array($compiled_query);
+    if ($result) {
+        $_SESSION["add_student_msg"] = "Email or phone exist.";
+        $_SESSION["success"] = false;
+        header("location:add-student.php");
+        exit();
+    }
+    $query = "INSERT INTO user(fullname, email, phone, role, password, status) VALUES('$fullname', '$email', '$phone', '$role', '$password', '$status')";
+    $result = mysqli_query($db, $query);
+    if ($result) {
+        $_SESSION["add_student_msg"] = "Student has been added.";
+        $_SESSION["success"] = true;
+    } else {
+        $_SESSION["admission_response"] = "Something went wrong.";
+        $_SESSION["success"] = false;
+    }
+    header("location:add-student.php");
+    exit();
+}
 
 ?>
 
@@ -29,27 +87,26 @@ $sql_query = mysqli_query($db, $sql);
 </head>
 
 <body>
-<h4 class="text-center" style="font-size: 14px;color: red;">
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?php include('./components/admin-header.php') ?>
             <div class="col py-0">
                 <div class="d-flex flex-column justify-content-between auth_page">
-                    <div class="row">
+                    <div class="row mb-5">
                         <div class="col-md-4 offset-1">
-                            <h2 class="section_titles">Add Student by Admission</h2>
-                            <form action="login_check.php" method="POST">
+                            <h2 class="section_titles">Approve Student Request</h2>
+                            <form action="#" method="POST">
                                 <div class="form-group mb-4">
-                                    <label for="userId">Select a Student</label>
+                                    <label for="userId">Select a Student*</label>
                                     <select class="form-control" name="userId" required>
                                         <option value=''>
                                             Select Student
                                         </option>
                                         <?php
-                                        while ($row  = $sql_query->fetch_assoc()) {
+                                        while ($row  = $student_list->fetch_assoc()) {
                                         ?>
                                             <option value='<?= $row['id'] ?>'>
-                                                <?= $row['username'] ?>
+                                                <?= $row['fullname'] ?>
                                             </option>
                                         <?php
                                         }
@@ -57,19 +114,41 @@ $sql_query = mysqli_query($db, $sql);
                                     </select>
                                 </div>
                                 <div class="form-group mb-4">
-                                    <label for="password">Password</label>
+                                    <label for="password">Password*</label>
                                     <input type="password" class="form-control" name="password" placeholder="*******" required>
                                 </div>
                                 <div class="form-group mb-4">
-                                    <label for="password">Confrim Password</label>
+                                    <label for="conrim_password">Confrim Password*</label>
                                     <input type="password" class="form-control" name="conrim_password" placeholder="*******" required>
                                 </div>
-                                <input type="submit" value="Login" class="btn btn-success">
+                                <input type="submit" value="Approve" name="add_requested_student" class="btn btn-success">
                             </form>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4 offset-1">
                             <h2 class="section_titles">Add Student Manually</h2>
-                            <div></div>
+                            <form action="#" method="POST">
+                                <div class="form-group mb-4">
+                                    <label for="fullname">Full name*</label>
+                                    <input type="text" class="form-control" name="fullname" placeholder="e.g. Jhon Dow" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="email">Email address*</label>
+                                    <input type="email" class="form-control" name="email" placeholder="e.g. jhon@example.com" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="phone">Phone*</label>
+                                    <input type="number" class="form-control" name="phone" placeholder="e.g. 017XXXXXXXX" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="password">Password*</label>
+                                    <input type="password" class="form-control" name="password" placeholder="*******" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="conrim_password">Confrim Password*</label>
+                                    <input type="password" class="form-control" name="conrim_password" placeholder="*******" required>
+                                </div>
+                                <input type="submit" value="Add Student" name="add_student_menually" class="btn btn-success">
+                            </form>
                         </div>
                     </div>
                     <!-- footer -->
@@ -82,3 +161,24 @@ $sql_query = mysqli_query($db, $sql);
 </body>
 
 </html>
+
+<?php
+$msg = $_SESSION['add_student_msg'];
+$success = $_SESSION['success'];
+if ($msg) {
+    if ($success) {
+        echo "<script>
+                \$(document).ready(function () {
+                    toastr.success('$msg');
+                });
+            </script>";
+    } else {
+        echo "<script>
+                \$(document).ready(function () {
+                    toastr.warning('$msg');
+                });
+            </script>";
+    }
+    $_SESSION['add_student_msg'] = "";
+};
+?>

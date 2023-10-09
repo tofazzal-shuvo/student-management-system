@@ -1,5 +1,5 @@
 <?php
-// error_reporting(0);
+error_reporting(0);
 session_start();
 
 if (isset($_POST["login_submit"])) {
@@ -14,12 +14,13 @@ if (isset($_POST["login_submit"])) {
         $_SESSION["login_msg"] = "You hasn't admitted by admin. Please wait until admin not accept.";
         $_SESSION["success"] = false;
         header("location:login.php");
+        exit();
     }
 
     $query = "SELECT * FROM user WHERE email='" . $email . "' AND password='" . $passord . "'";
     $compiled_query = mysqli_query($db, $query);
     $result = mysqli_fetch_array($compiled_query);
-    echo mysqli_error($db);
+
     if ($result["role"] === 'student') {
         $_SESSION["role"] = "student";
         $_SESSION["email"] = $email;
